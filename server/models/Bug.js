@@ -2,13 +2,15 @@ import mongoose from "mongoose"
 let Schema = mongoose.Schema
 let ObjectId = Schema.Types.ObjectId
 
-const Board = new Schema({
+const Bug = new Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
-  creatorEmail: { type: String, required: true }
+  creatorEmail: { type: String, required: true },
+  comments: [{ type: ObjectId }],
+  status: { type: String, required: true, default: "Open" }
 }, { timestamps: true, toJSON: { virtuals: true } })
 
-Board.virtual("creator",
+Bug.virtual("creator",
   {
     localField: "creatorEmail",
     ref: "Profile",
@@ -26,4 +28,4 @@ Board.virtual("creator",
 //     .catch(err => next(err))
 // })
 
-export default Board
+export default Bug

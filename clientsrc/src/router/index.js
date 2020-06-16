@@ -3,9 +3,8 @@ import Router from "vue-router";
 // @ts-ignore
 import Home from "../views/Home.vue";
 // @ts-ignore
-import Boards from "../views/Boards.vue";
 // @ts-ignore
-import Board from "../views/Board.vue";
+import Bug from "../views/Bug.vue";
 import { authGuard } from "@bcwdev/auth0-vue";
 
 Vue.use(Router);
@@ -18,16 +17,9 @@ export default new Router({
       component: Home,
     },
     {
-      path: "/boards",
-      name: "boards",
-      component: Boards,
-      beforeEnter: authGuard,
-    },
-    {
-      path: "/boards/:id",
-      name: "board",
-      component: Board,
-      beforeEnter: authGuard,
+      path: "/:bugId",
+      name: "bug",
+      component: Bug,
     },
     {
       path: "*",

@@ -19,26 +19,33 @@ let api = Axios.create({
 export default new Vuex.Store({
   state: {
     user: {},
-    boards: [],
-    activeBoard: {},
-    lists: [],
+    bugs: [],
+    activeBug: {},
+    comments: [],
     tasks: [],
     comments: [],
+    activeLists: [],
   },
   mutations: {
     setUser(state, user) {
       state.user = user;
     },
-    setBoards(state, boards) {
-      state.boards = boards;
+    setBugs(state, bugs) {
+      state.bugs = bugs;
     },
-    setActiveBoard(state, board) {
-      state.activeBoard = board;
+    setActiveBug(state, bug) {
+      state.activeBug = bug;
+    },
+    setComments(state, comments) {
+      state.comments = comments
+    },
+    setActiveLists(state, data) {
+      state.activeLists = data
     },
   },
   actions: {
     //#region -- AUTH STUFF --
-    setBearer({}, bearer) {
+    setBearer({ }, bearer) {
       console.log(bearer);
       api.defaults.headers.authorization = bearer;
     },
@@ -56,29 +63,75 @@ export default new Vuex.Store({
     //#endregion
 
     //#region -- BOARDS --
-    getBoards({ commit, dispatch }) {
-      api.get("boards").then((res) => {
-        commit("setBoards", res.data);
+    getBugs({ commit, dispatch }) {
+      api.get("bugs").then((res) => {
+        commit("setBugs", res.data);
       });
     },
-    async getBoardById({ commit, dispatch }, id) {
+    async getBugById({ commit, dispatch }, id) {
       try {
-        let res = await api.get("boards/" + id);
-        commit("setActiveBoard", res.data);
-        console.log(res.data);
+        let res = await api.get("bugs/" + id);
+        commit("setActiveBug", res.data);
       } catch (error) {
         console.error(error);
       }
     },
-    addBoard({ commit, dispatch }, boardData) {
-      api.post("boards", boardData).then((serverBoard) => {
-        dispatch("getBoards");
-      });
+
+    async addBug({ commit, dispatch }, newBug) {
+      try {
+        let res = await api.post('bugs', newBug)
+        dispatch("getBugs")
+      } catch (error) {
+        console.error(error)
+      }
     },
-    //#endregion
+    async getCommentsbyBugId({ commit, dispatch }, id) {
+      try {
+        let res = await api.get('bugs/' + id + "/comments")
+        commit("setComments", res.data)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async addComment({ commit, dispatch }, newComment) {
+      try {
+        let res = await api.post('comments/', newComment)
+        dispatch("getCommentsbyBugId", newComment.bugId)
+      } catch (error) {
+        console.error(error)
+      }
+    },
 
-    //#region -- LISTS --
-
-    //#endregion
+    async removeComment({ commit, dispatch }, comment) {
+      try {
+        let res = await api.delete('comments/' + comment.id)
+        dispatch("getCommentsbyBugId", comment.bugId.id)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async statusChange({ commit, dispatch }, update) {
+      try {
+        let res = await api.put('bugs/' + update.id, update)
+        dispatch("getBugById", update.id)
+      } catch (error) {
+        console.error(error)
+      }
+    },
+    async editBug({ commit, dispatch }, bug) {
+      try {
+        let res = await api.put('bugs/' + bug.bugId, bug)
+        dispatch("getBugById", bug.bugId)
+      } catch (error) {
+        console.error(error)
+      }
+    }
   },
+
+  //#endregion
+
+  //#region -- LISTS --
+
+  //#endregion
+
 });

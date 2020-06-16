@@ -1,22 +1,20 @@
-import mongoose from "mongoose";
-let Schema = mongoose.Schema;
-let ObjectId = Schema.Types.ObjectId;
+import mongoose from "mongoose"
+let Schema = mongoose.Schema
+let ObjectId = Schema.Types.ObjectId
 
-const Comment = new Schema(
-  {
+const Comment = new Schema({
     title: { type: String, required: true },
-    taskId: { type: ObjectId, ref: "Task", required: true },
     creatorEmail: { type: String, required: true },
-  },
-  { timestamps: true, toJSON: { virtuals: true } }
-);
+    bugId: { type: ObjectId, ref: 'Bug', required: true },
+}, { timestamps: true, toJSON: { virtuals: true } })
 
-Comment.virtual("creator", {
-  localField: "creatorEmail",
-  ref: "Profile",
-  foreignField: "email",
-  justOne: true,
-});
+Comment.virtual("creator",
+    {
+        localField: "creatorEmail",
+        ref: "Profile",
+        foreignField: "email",
+        justOne: true
+    })
 
 //CASCADE ON DELETE
 // Board.pre('findOneAndRemove', function (next) {
@@ -28,4 +26,4 @@ Comment.virtual("creator", {
 //     .catch(err => next(err))
 // })
 
-export default Comment;
+export default Comment
